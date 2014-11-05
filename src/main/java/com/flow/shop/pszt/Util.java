@@ -1,3 +1,5 @@
+package com.flow.shop.pszt;
+
 import java.util.Random;
 
 /**

@@ -1,5 +1,7 @@
+package com.flow.shop.pszt;
+
 /**
- * Operators for the evolutionary algorithms;
+ * com.flow.shop.pszt.Operators for the evolutionary algorithms;
  *
  * Created by krris on 29.10.14.
  * Copyright (c) 2014 krris. All rights reserved.
