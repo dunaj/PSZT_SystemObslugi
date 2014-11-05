@@ -34,7 +34,6 @@ public class TasksLoaderTest {
         int expectedMachinesNo = 5;
         Task task = tasks.get(0);
         assertEquals(expectedMachinesNo, task.getComputationTimeForMachines().size());
-
     }
 
     @Test

@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class Task {
     private int id;
+    // Computation time for given machine id.
     private Map<Integer, Double> computationTimeForMachine;
 
     public Task(int id, Map<Integer, Double> computationTimeForMachine) {

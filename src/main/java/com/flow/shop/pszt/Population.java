@@ -41,34 +41,34 @@ public class Population {
     }
 
     // Generate a mating pool
-    void naturalSelection() {
+    public void naturalSelection() {
         // Clear the ArrayList
         matingPool.clear();
 
-        double minFitness = 0;
-        double maxFitness = 0;
+        double totalFitness = 0;
         for (int i = 0; i < population.length; i++) {
-            if (population[i].getFitness() > maxFitness) {
-                maxFitness = population[i].getFitness();
-            }
+            totalFitness += population[i].getFitness();
         }
 
         // Based on fitness, each member will get added to the mating pool a certain number of times
-        // a higher fitness = more entries to mating pool = more likely to be picked as a parent
-        // a lower fitness = fewer entries to mating pool = less likely to be picked as a parent
+        // a lower fitness = more entries to mating pool = more likely to be picked as a parent
+        // a higher fitness = fewer entries to mating pool = less likely to be picked as a parent
         for (int i = 0; i < population.length; i++) {
 
-            // Normalization: brings all values into the range [0,1]
-            double fitness = (population[i].getFitness() - minFitness) / (maxFitness - minFitness);
-            int n = (int) (fitness * 100);  // Arbitrary multiplier, we can also use monte carlo method
-            for (int j = 0; j < n; j++) {              // and pick two random numbers
+            // switch value of fitness: lower value = more likely to be picked
+            double fitness = totalFitness - population[i].getFitness();
+
+            // Normalization: brings all values into the range [0,1]. Sum of all normalized fitness is 1.
+            double normalizedFitness = fitness / totalFitness;
+            int n = (int) (normalizedFitness * 100);         // Arbitrary multiplier, we can also use monte carlo method
+            for (int j = 0; j < n; j++) {                    // and pick a random numbers
                 matingPool.add(population[i]);
             }
         }
     }
 
     // Create a new generation
-    void generate() {
+    public void generate() {
         // Refill the population with children from the mating pool
         for (int i = 0; i < population.length; i++) {
             int a = random.nextInt(matingPool.size());
@@ -82,13 +82,12 @@ public class Population {
         generations++;
     }
 
-
     // Compute the current "most fit" member of the population
-    String getBest() {
-        double worldrecord = 0;
+    public String getBest() {
+        double worldrecord = Double.MAX_VALUE;
         int index = 0;
         for (int i = 0; i < population.length; i++) {
-            if (population[i].getFitness() > worldrecord) {
+            if (population[i].getFitness() < worldrecord) {
                 index = i;
                 worldrecord = population[i].getFitness();
             }
@@ -98,16 +97,16 @@ public class Population {
         return population[index].getOrder();
     }
 
-    boolean finished() {
+    public boolean finished() {
         return finished;
     }
 
-    int getGenerations() {
+    public int getGenerations() {
         return generations;
     }
 
     // Compute average fitness for the population
-    float getAverageFitness() {
+    public float getAverageFitness() {
         float total = 0;
         for (int i = 0; i < population.length; i++) {
             total += population[i].getFitness();

@@ -1,9 +1,5 @@
 package com.flow.shop.pszt;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -12,17 +8,15 @@ import java.util.Random;
  * Created by krris on 29.10.14.
  * Copyright (c) 2014 krris. All rights reserved.
  */
-public class DNA implements Operators, ApplicationContextAware {
+public class DNA implements Operators {
 
-    private ArrayList<Task> loadedTasks;
     private ArrayList<Task> genes;
     private double fitness;
 
     private Random random = new Random();
-    private ApplicationContext context;
 
-    public DNA(ArrayList<Task> loadedTasks) {
-        this.genes = new ArrayList<>(loadedTasks);
+    public DNA(ArrayList<Task> tasks) {
+        this.genes = new ArrayList<>(tasks);
 
         // Initialize DNA with random order of genes
         Collections.shuffle(this.genes);
@@ -85,7 +79,6 @@ public class DNA implements Operators, ApplicationContextAware {
         return genes;
     }
 
-    // Fitness function (set floating point % of "correct" characters)
     public void calculateFitness () {
         this.fitness = c(TasksLoader.getTasksNo(), TasksLoader.getMachinesNo());
     }
@@ -108,10 +101,5 @@ public class DNA implements Operators, ApplicationContextAware {
 
     public double getFitness() {
         return fitness;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
     }
 }

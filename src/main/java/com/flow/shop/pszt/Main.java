@@ -10,38 +10,12 @@ import java.util.ArrayList;
  * Copyright (c) 2014 krris. All rights reserved.
  */
 public class Main {
-    // Genetic Algorithm, Evolving Shakespeare
 
-    // Demonstration of using a genetic algorithm to perform a search
-
-    // setup()
-    //  # Step 1: The com.flow.shop.pszt.Population
-    //    # Create an empty population (an array or ArrayList)
-    //    # Fill it with com.flow.shop.pszt.DNA encoded objects (pick random values to start)
-
-    // draw()
-    //  # Step 1: Selection
-    //    # Create an empty mating pool (an empty ArrayList)
-    //    # For every member of the population, evaluate its fitness based on some criteria / function,
-    //      and add it to the mating pool in a manner consistant with its fitness, i.e. the more fit it
-    //      is the more times it appears in the mating pool, in order to be more likely picked for reproduction.
-
-    //  # Step 2: Reproduction Create a new empty population
-    //    # Fill the new population by executing the following steps:
-    //       1. Pick two "parent" objects from the mating pool.
-    //       2. Crossover -- create a "child" object by mating these two parents.
-    //       3. Mutation -- mutate the child's com.flow.shop.pszt.DNA based on a given probability.
-    //       4. Add the child object to the new population.
-    //    # Replace the old population with the new population
-    //
-    //   # Rinse and repeat
-
-    private static final int POPULATION_MAX = 10;
-    private static final double MUTATION_RATE = 0.01;
-    private static final int MAX_GENERATIONS = 500;
+    private static final int POPULATION_MAX = 150;
+    private static final double MUTATION_RATE = 0.03;
+    private static final int MAX_GENERATIONS = 2000;
 
     private Population population;
-    private static long startTime = System.currentTimeMillis();
     private ApplicationContext context;
 
     public static void main(String[] args) {
@@ -50,17 +24,15 @@ public class Main {
 
         for (int i = 0; i < MAX_GENERATIONS; i++){
             main.oneGeneration();
-            if (main.isFinished()) {
-                System.out.println(("Time: " + (System.currentTimeMillis() - startTime) / 1000.0) + "s");
-                break;
-            }
         }
     }
 
     public void setup() {
+        // Load csv file and get all tasks
         this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
         TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
         ArrayList<Task> loadedTasks = tasksLoader.getTasks();
+
         // Create a population with a target phrase, mutation rate, and population max
         population = new Population(MUTATION_RATE, POPULATION_MAX, loadedTasks);
     }
@@ -73,11 +45,6 @@ public class Main {
         // Calculate fitness
         population.calcFitness();
         displayInfo();
-    }
-
-    public boolean isFinished() {
-        // If we found the target phrase, stop
-        return population.finished();
     }
 
     public void displayInfo() {
