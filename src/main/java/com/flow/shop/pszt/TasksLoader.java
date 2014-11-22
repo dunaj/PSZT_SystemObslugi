@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
+ * In loaded file rows correspond to tasks and columns to machines
+ * 
  * Created by krris on 04.11.14.
  * Copyright (c) 2014 krris. All rights reserved.
  */

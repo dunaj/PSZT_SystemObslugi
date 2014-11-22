@@ -17,12 +17,26 @@ public class Main {
 
     private Population population;
     private ApplicationContext context;
-
+    
+    private int populationMax;
+    private double mutationRate;
+    private int maxGenerations;
+    
     public static void main(String[] args) {
         Main main = new Main();
-        main.setup();
+        if (args.length==0) { // if we don't have any command line arguments
+        	main.populationMax = POPULATION_MAX;
+        	main.mutationRate = MUTATION_RATE;
+        	main.maxGenerations = MAX_GENERATIONS;
+        	main.setup();   // please load the default file
+        } else {
+        	main.populationMax = Integer.parseInt(args[0]);
+        	main.mutationRate = Double.parseDouble(args[1]);
+        	main.maxGenerations = Integer.parseInt(args[2]);
+        	main.setup(main.populationMax, main.mutationRate, main.maxGenerations);
+        }
 
-        for (int i = 0; i < MAX_GENERATIONS; i++){
+        for (int i = 0; i < main.maxGenerations; i++){
             main.oneGeneration();
         }
     }
@@ -36,7 +50,17 @@ public class Main {
         // Create a population with a target phrase, mutation rate, and population max
         population = new Population(MUTATION_RATE, POPULATION_MAX, loadedTasks);
     }
+    
+    public void setup(int populMax, double mutRate, int maxGen) {
+        // Load csv file and get all tasks
+        this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
+        TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
+        ArrayList<Task> loadedTasks = tasksLoader.getTasks();
 
+        // Create a population with a target phrase, mutation rate, and population max
+        population = new Population(mutRate, populMax, loadedTasks);
+    }
+    
     public void oneGeneration() {
         // Generate mating pool
         population.naturalSelection();
@@ -53,8 +77,8 @@ public class Main {
         System.out.println("Answer: " + answer);
         System.out.println("Total generations: " + population.getGenerations());
         System.out.println("Average fitness: " + population.getAverageFitness());
-        System.out.println("Total population: " + POPULATION_MAX);
-        System.out.println("Mutation rate: " + (MUTATION_RATE * 100) + "%");
+        System.out.println("Total population: " + populationMax);
+        System.out.println("Mutation rate: " + (mutationRate * 100) + "%");
         System.out.println("===========================");
     }
 }
