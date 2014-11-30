@@ -4,10 +4,13 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 /**
  * In loaded file rows correspond to tasks and columns to machines
@@ -23,7 +26,7 @@ public class TasksLoader {
     private static int machinesNo;
 
     public TasksLoader(String csvPath) {
-        this.tasks = loadTasksAndSetMachineAndTasksNo(csvPath);
+        this.tasks = loadTasksAndSetMachineAndTasksNoFromNotepad(csvPath);
     }
 
     public ArrayList<Task> getTasks() {
@@ -38,11 +41,12 @@ public class TasksLoader {
 
         for (CSVRecord record : parser) {
             HashMap<Integer, Double> computationTimeForMachine = new HashMap<>();
-
+            
+            
             machineId = 0;
             for (String field : record) {
                 computationTimeForMachine.put(machineId, Double.parseDouble(field));
-                machineId++;
+            	machineId++;
             }
             tasks.add(new Task(taskId, computationTimeForMachine));
             taskId++;
@@ -54,17 +58,45 @@ public class TasksLoader {
 
         return tasks;
     }
-
+    
+    private ArrayList<Task> loadTasksAndSetMachineAndTasksNoFromNotepad(String notePath) {
+    	HashMap<Integer, Double> computationTimeForMachine = new HashMap<>();
+        ArrayList<Task> tasks = new ArrayList<>();
+        int taskId = 0;
+        int machineId = 0;
+        File file = new File(notePath);
+        Scanner in;
+		try {
+			in = new Scanner(file);
+	        int nTasks = in.nextInt();
+	        int nMachines = in.nextInt();
+			for (int i =0; i<nTasks; i++){
+				machineId = 0;
+	            for (int j =0; j<nMachines; j++) {
+	            	double t = in.nextDouble();
+	                computationTimeForMachine.put(machineId, t);
+	            	machineId++;
+	            }
+	            tasks.add(new Task(taskId, computationTimeForMachine));
+	            taskId++;
+			}
+			in.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+        return tasks;
+    }
+    
     private CSVParser getCsvParser(String csvPath) {
         CSVParser parser = null;
         try {
-            parser = new CSVParser(new FileReader(csvPath), CSVFormat.DEFAULT);
+            parser = new CSVParser(new FileReader(csvPath), CSVFormat.DEFAULT.withDelimiter(' '));
         } catch (IOException e) {
             e.printStackTrace();
         }
         return parser;
     }
-
+    
     public static int getMachinesNo() {
         return machinesNo;
     }

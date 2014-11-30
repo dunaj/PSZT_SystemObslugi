@@ -39,6 +39,7 @@ public class Main {
         for (int i = 0; i < main.maxGenerations; i++){
             main.oneGeneration();
         }
+    	
     }
 
     public void setup() {
@@ -53,8 +54,9 @@ public class Main {
     
     public void setup(int populMax, double mutRate, int maxGen) {
         // Load csv file and get all tasks
-        this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
-        TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
+//        this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
+//        TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
+    	TasksLoader tasksLoader = new TasksLoader("C:/Users/Adamek/Documents/_I.ISI/PSZT/projekt/2020rand/problems/problem.1");
         ArrayList<Task> loadedTasks = tasksLoader.getTasks();
 
         // Create a population with a target phrase, mutation rate, and population max
