@@ -80,62 +80,45 @@ public class DNA implements Operators {
     }
 
     public void calculateFitness () {
-    	Double [][] tempTab = new Double [TasksLoader.getTasksNo()][TasksLoader.getMachinesNo()];
-    	this.fitness = c(TasksLoader.getTasksNo()-1, TasksLoader.getMachinesNo()-1, tempTab);
+    	Double[][] computedValues = new Double[TasksLoader.getTasksNo() + 1][TasksLoader.getMachinesNo() + 1];
+    	this.fitness = c(TasksLoader.getTasksNo(), TasksLoader.getMachinesNo(), computedValues);
     }
-    
+
     /**
      * Function which implements counting of fitness by recurrence
-     * 
+     *
      * @param i - actual position in rows (tasks) in recurrence
      * @param j - actual position in columns (machines) in recurrence
-     * @param temp - temporary table for avoiding stack overflow
+     * @param computedValues - temporary table for avoiding stack overflow
      * @return - fitness count
      */
-    private double c(int i, int j, Double[][] temp) {
+    private double c(int i, int j, Double[][] computedValues) {
+        if (computedValues[i][j] != null) {
+            return computedValues[i][j];
+        }
+
         if (i == 0 && j == 0) {
-        	temp[i][j] = genes.get(i).getComputationTimeForMachine(j);
-            return genes.get(i).getComputationTimeForMachine(j);
+            double returnValue = genes.get(i).getComputationTimeForMachine(j);
+            computedValues[i][j] = returnValue;
+            return returnValue;
         }
 
         if (i == 0 && j > 0) {
-        	if (temp[i][j-1] != null) {
-        		return temp[i][j-1] + genes.get(i).getComputationTimeForMachine(j);
-        	}
-        	temp[i][j-1] = c(i, j-1, temp) + genes.get(i).getComputationTimeForMachine(j);
-            return temp[i][j-1];
+            double returnValue =  c(i, j-1, computedValues) + genes.get(i).getComputationTimeForMachine(j);
+            computedValues[i][j] = returnValue;
+            return returnValue;
         }
 
         if (i > 0 && j == 0) {
-        	if (temp[i-1][j] != null) {
-        		return temp[i-1][j] + genes.get(i).getComputationTimeForMachine(j);
-        	}
-            temp[i-1][j] = c(i-1, j, temp) + genes.get(i).getComputationTimeForMachine(j);
-        	return temp[i-1][j];
-            		
+            double returnValue =  c(i-1, j, computedValues) + genes.get(i).getComputationTimeForMachine(j);
+            computedValues[i][j] = returnValue;
+            return returnValue;
         }
-        if (temp[i-1][j] != null) {
-        	if (temp[i][j-1] != null) {
-        		return Math.max(temp[i-1][j], temp[i][j-1]) 
-                		+ genes.get(i).getComputationTimeForMachine(j);
-        	} else {
-        		temp[i][j-1] = c(i, j-1, temp);
-        		return Math.max(temp[i-1][j], temp[i][j-1]) 
-        		+ genes.get(i).getComputationTimeForMachine(j);
-        	}
-        } else {
-        	if (temp[i][j-1] != null) {
-        		temp[i-1][j]=c(i -1, j, temp);
-        		return Math.max(temp[i-1][j], temp[i][j-1]) 
-                		+ genes.get(i).getComputationTimeForMachine(j);
-        	} else {
-        		temp[i][j-1] = c(i, j-1, temp);
-        		temp[i-1][j]=c(i -1, j, temp);
-        		return Math.max(temp[i][j-1], temp[i-1][j]) 
-                		+ genes.get(i).getComputationTimeForMachine(j);
-        	}
-        }
+
+        return Math.max(c(i - 1, j, computedValues), c(i, j - 1, computedValues)) + genes.get(i).getComputationTimeForMachine(j);
     }
+
+
 
     public double getFitness() {
         return fitness;

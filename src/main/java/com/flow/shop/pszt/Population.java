@@ -15,8 +15,7 @@ public class Population {
     private List<DNA> matingPool;         // ArrayList which we will use for our "mating pool"
     private int generations;              // Number of generations
     private boolean finished;             // Are we finished evolving?
-    private int perfectScore;
-    
+
     private double BEST_FITNESS_EVER;
 	private DNA BEST_MEMBER_EVER;
     
@@ -33,7 +32,6 @@ public class Population {
         this.finished = false;
         this.generations = 0;
 
-        this.perfectScore = 1;
         BEST_FITNESS_EVER = Double.MAX_VALUE;
         BEST_MEMBER_EVER = null;
     }
@@ -88,18 +86,17 @@ public class Population {
     }
 
     // Compute the current "most fit" member of the population
-    public String getBest() {
-        double worldrecord = Double.MAX_VALUE;
+    public DNA getBestMemberDNA() {
+        double worldRecord = Double.MAX_VALUE;
         int index = 0;
         for (int i = 0; i < population.length; i++) {
-            if (population[i].getFitness() < worldrecord) {
+            if (population[i].getFitness() < worldRecord) {
                 index = i;
-                worldrecord = population[i].getFitness();
+                worldRecord = population[i].getFitness();
             }
         }
 
-        if (worldrecord == perfectScore ) finished = true;
-        return population[index].getOrder();
+        return population[index];
     }
     
     /**

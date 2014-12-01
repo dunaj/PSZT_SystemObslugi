@@ -11,57 +11,43 @@ import java.util.ArrayList;
  */
 public class Main {
 
-    private static final int POPULATION_MAX = 150;
-    private static final double MUTATION_RATE = 0.03;
-    private static final int MAX_GENERATIONS = 2000;
+    private static final int DEFAULT_POPULATION_MAX = 5;
+    private static final double DEFAULT_MUTATION_RATE = 0.03;
+    private static final int DEFAULT_MAX_GENERATIONS = 1000;
 
     private Population population;
     private ApplicationContext context;
-    private TasksLoader tasksLoader; 
-    
+
     private int populationMax;
     private double mutationRate;
     private int maxGenerations;
-    
+
     public static void main(String[] args) {
         Main main = new Main();
         if (args.length==0) { // if we don't have any command line arguments
-        	main.populationMax = POPULATION_MAX;
-        	main.mutationRate = MUTATION_RATE;
-        	main.maxGenerations = MAX_GENERATIONS;
-        	main.setup();   // please load the default file
+            main.populationMax = DEFAULT_POPULATION_MAX;
+            main.mutationRate = DEFAULT_MUTATION_RATE;
+            main.maxGenerations = DEFAULT_MAX_GENERATIONS;
         } else {
-        	main.populationMax = Integer.parseInt(args[0]);
-        	main.mutationRate = Double.parseDouble(args[1]);
-        	main.maxGenerations = Integer.parseInt(args[2]);
-        	main.setup(main.populationMax, main.mutationRate, main.maxGenerations);
+            main.populationMax = Integer.parseInt(args[0]);
+            main.mutationRate = Double.parseDouble(args[1]);
+            main.maxGenerations = Integer.parseInt(args[2]);
         }
+        main.setup(main.populationMax, main.mutationRate);
 
         for (int i = 0; i < main.maxGenerations; i++){
             main.oneGeneration();
         }
-    	
     }
 
-    public void setup() {
-        // Load csv file and get all tasks
-        this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
-        tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
-        ArrayList<Task> loadedTasks = tasksLoader.getTasks();
-
-        // Create a population with a target phrase, mutation rate, and population max
-        population = new Population(MUTATION_RATE, POPULATION_MAX, loadedTasks);
-    }
-    
-    public void setup(int populMax, double mutRate, int maxGen) {
+    public void setup(int populationMax, double mutationRate) {
         // Load csv file and get all tasks
         this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
         TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
-//    	tasksLoader = new TasksLoader("C:/Users/Adamek/Documents/_I.ISI/PSZT/projekt/2020rand/problems/problem.1");
         ArrayList<Task> loadedTasks = tasksLoader.getTasks();
 
         // Create a population with a target phrase, mutation rate, and population max
-        population = new Population(mutRate, populMax, loadedTasks);
+        population = new Population(mutationRate, populationMax, loadedTasks);
     }
     
     public void oneGeneration() {
@@ -77,11 +63,12 @@ public class Main {
 
     public void displayInfo() {
     	// Display the best population ever and its fitness
-    	System.out.println("Best fitness: "+ population.getBEST_FITNESS_EVER());
-        System.out.println("Best population: " + population.getBEST_MEMBER_EVER());
+        System.out.println("Best fitness: "+ population.getBEST_FITNESS_EVER());
+        System.out.println("Best member ever: " + population.getBEST_MEMBER_EVER());
         // Display current status of population
-        String answer = population.getBest();
-        System.out.println("Answer: " + answer);
+        DNA bestMemberInCurrentPopulation = population.getBestMemberDNA();
+        System.out.println("Best member's fitness in current population: " + bestMemberInCurrentPopulation.getFitness());
+        System.out.println("Best member in current population: " + bestMemberInCurrentPopulation.getOrder());
         System.out.println("Total generations: " + population.getGenerations());
         System.out.println("Average fitness: " + population.getAverageFitness());
         System.out.println("Total population: " + populationMax);

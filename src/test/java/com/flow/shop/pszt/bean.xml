@@ -5,7 +5,7 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="tasksLoader" class="com.flow.shop.pszt.TasksLoader" >
-        <constructor-arg value="src/test/resources/data.csv"/>
+        <constructor-arg value="src/test/resources/problem.1"/>
     </bean>
 
 </beans>

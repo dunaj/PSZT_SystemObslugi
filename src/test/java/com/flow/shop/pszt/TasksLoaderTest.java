@@ -28,11 +28,11 @@ public class TasksLoaderTest {
     public void testLoadingCsvFile() {
         ArrayList<Task> tasks = tasksLoader.getTasks();
 
-        int expectedTasksNo = 4;
+        int expectedTasksNo = 19;
         int actualTasksNo = tasks.size() - 1;
         assertEquals(expectedTasksNo, actualTasksNo);
 
-        int expectedMachinesNo = 4;
+        int expectedMachinesNo = 19;
         Task task = tasks.get(0);
         int actualMachinesNo = task.getComputationTimeForMachines().size() - 1;
         assertEquals(expectedMachinesNo, actualMachinesNo);
@@ -40,7 +40,7 @@ public class TasksLoaderTest {
 
     @Test
     public void machinesAndTasksNo() {
-        assertEquals(4, TasksLoader.getMachinesNo());
-        assertEquals(4, TasksLoader.getTasksNo());
+        assertEquals(19, TasksLoader.getMachinesNo());
+        assertEquals(19, TasksLoader.getTasksNo());
     }
 }
