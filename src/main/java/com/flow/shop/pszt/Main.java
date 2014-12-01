@@ -17,6 +17,7 @@ public class Main {
 
     private Population population;
     private ApplicationContext context;
+    private TasksLoader tasksLoader; 
     
     private int populationMax;
     private double mutationRate;
@@ -45,7 +46,7 @@ public class Main {
     public void setup() {
         // Load csv file and get all tasks
         this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
-        TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
+        tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
         ArrayList<Task> loadedTasks = tasksLoader.getTasks();
 
         // Create a population with a target phrase, mutation rate, and population max
@@ -54,9 +55,9 @@ public class Main {
     
     public void setup(int populMax, double mutRate, int maxGen) {
         // Load csv file and get all tasks
-//        this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
-//        TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
-    	TasksLoader tasksLoader = new TasksLoader("C:/Users/Adamek/Documents/_I.ISI/PSZT/projekt/2020rand/problems/problem.1");
+        this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
+        TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
+//    	tasksLoader = new TasksLoader("C:/Users/Adamek/Documents/_I.ISI/PSZT/projekt/2020rand/problems/problem.1");
         ArrayList<Task> loadedTasks = tasksLoader.getTasks();
 
         // Create a population with a target phrase, mutation rate, and population max
@@ -70,10 +71,14 @@ public class Main {
         population.generate();
         // Calculate fitness
         population.calcFitness();
+        population.evaluate();
         displayInfo();
     }
 
     public void displayInfo() {
+    	// Display the best population ever and its fitness
+    	System.out.println("Best fitness: "+ population.getBEST_FITNESS_EVER());
+        System.out.println("Best population: " + population.getBEST_MEMBER_EVER());
         // Display current status of population
         String answer = population.getBest();
         System.out.println("Answer: " + answer);

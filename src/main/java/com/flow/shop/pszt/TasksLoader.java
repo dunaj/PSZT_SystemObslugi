@@ -68,11 +68,11 @@ public class TasksLoader {
         Scanner in;
 		try {
 			in = new Scanner(file);
-	        int nTasks = in.nextInt();
-	        int nMachines = in.nextInt();
-			for (int i =0; i<nTasks; i++){
+	        tasksNo = in.nextInt();
+	        machinesNo = in.nextInt();
+			for (int i =0; i<tasksNo ; i++){
 				machineId = 0;
-	            for (int j =0; j<nMachines; j++) {
+	            for (int j =0; j<machinesNo; j++) {
 	            	double t = in.nextDouble();
 	                computationTimeForMachine.put(machineId, t);
 	            	machineId++;

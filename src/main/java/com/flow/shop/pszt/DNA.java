@@ -81,7 +81,7 @@ public class DNA implements Operators {
 
     public void calculateFitness () {
     	Double [][] tempTab = new Double [TasksLoader.getTasksNo()][TasksLoader.getMachinesNo()];
-        this.fitness = c(TasksLoader.getTasksNo(), TasksLoader.getMachinesNo(), tempTab);
+    	this.fitness = c(TasksLoader.getTasksNo()-1, TasksLoader.getMachinesNo()-1, tempTab);
     }
     
     /**
@@ -93,44 +93,48 @@ public class DNA implements Operators {
      * @return - fitness count
      */
     private double c(int i, int j, Double[][] temp) {
-        if (i == 1 && j == 1) {
+        if (i == 0 && j == 0) {
         	temp[i][j] = genes.get(i).getComputationTimeForMachine(j);
-            return temp[i][j];//genes.get(i).getComputationTimeForMachine(j);
+            return genes.get(i).getComputationTimeForMachine(j);
         }
 
-        if (i == 1 && j > 1) {
+        if (i == 0 && j > 0) {
         	if (temp[i][j-1] != null) {
         		return temp[i][j-1] + genes.get(i).getComputationTimeForMachine(j);
         	}
-            return c(i, j-1, temp) + genes.get(i).getComputationTimeForMachine(j);
+        	temp[i][j-1] = c(i, j-1, temp) + genes.get(i).getComputationTimeForMachine(j);
+            return temp[i][j-1];
         }
 
-        if (i > 1 && j == 1) {
+        if (i > 0 && j == 0) {
         	if (temp[i-1][j] != null) {
         		return temp[i-1][j] + genes.get(i).getComputationTimeForMachine(j);
         	}
-            return c(i-1, j, temp) + genes.get(i).getComputationTimeForMachine(j);
+            temp[i-1][j] = c(i-1, j, temp) + genes.get(i).getComputationTimeForMachine(j);
+        	return temp[i-1][j];
+            		
         }
-        if (i!= 0 && j!= 0) {
         if (temp[i-1][j] != null) {
         	if (temp[i][j-1] != null) {
         		return Math.max(temp[i-1][j], temp[i][j-1]) 
                 		+ genes.get(i).getComputationTimeForMachine(j);
         	} else {
-        		return Math.max(temp[i-1][j], c(i, j-1, temp)) 
+        		temp[i][j-1] = c(i, j-1, temp);
+        		return Math.max(temp[i-1][j], temp[i][j-1]) 
         		+ genes.get(i).getComputationTimeForMachine(j);
         	}
         } else {
         	if (temp[i][j-1] != null) {
-        		return Math.max(c(i -1, j, temp), temp[i][j-1]) 
+        		temp[i-1][j]=c(i -1, j, temp);
+        		return Math.max(temp[i-1][j], temp[i][j-1]) 
                 		+ genes.get(i).getComputationTimeForMachine(j);
         	} else {
-        		return Math.max(c(i -1, j, temp), c(i, j-1, temp)) 
+        		temp[i][j-1] = c(i, j-1, temp);
+        		temp[i-1][j]=c(i -1, j, temp);
+        		return Math.max(temp[i][j-1], temp[i-1][j]) 
                 		+ genes.get(i).getComputationTimeForMachine(j);
         	}
         }
-        }
-		return fitness;
     }
 
     public double getFitness() {

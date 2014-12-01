@@ -16,7 +16,10 @@ public class Population {
     private int generations;              // Number of generations
     private boolean finished;             // Are we finished evolving?
     private int perfectScore;
-
+    
+    private double BEST_FITNESS_EVER;
+	private DNA BEST_MEMBER_EVER;
+    
     private Random random = new Random();
 
     public Population( double mutationRate, int populationMax, ArrayList<Task> tasks) {
@@ -31,6 +34,8 @@ public class Population {
         this.generations = 0;
 
         this.perfectScore = 1;
+        BEST_FITNESS_EVER = Double.MAX_VALUE;
+        BEST_MEMBER_EVER = null;
     }
 
     // Fill our fitness array with a value for every member of the population
@@ -96,7 +101,21 @@ public class Population {
         if (worldrecord == perfectScore ) finished = true;
         return population[index].getOrder();
     }
-
+    
+    /**
+     * evaluate the current Population and check if there is a member better
+     * than the one which was best until now
+     * @return
+     */
+    public void evaluate() {
+    	for (int i = 0; i < population.length; i++) {
+            if (population[i].getFitness() < BEST_FITNESS_EVER) {
+                BEST_MEMBER_EVER = population[i];
+                BEST_FITNESS_EVER = population[i].getFitness();
+            }
+        }
+    }
+    
     public boolean finished() {
         return finished;
     }
@@ -113,4 +132,12 @@ public class Population {
         }
         return total / (population.length);
     }
+    
+    public double getBEST_FITNESS_EVER() {
+		return BEST_FITNESS_EVER;
+	}
+
+	public String getBEST_MEMBER_EVER() {
+		return BEST_MEMBER_EVER.getOrder();
+	}
 }
