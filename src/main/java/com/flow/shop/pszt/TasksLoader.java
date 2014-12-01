@@ -1,13 +1,16 @@
 package com.flow.shop.pszt;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * In loaded file rows correspond to tasks and columns to machines
@@ -19,8 +22,8 @@ public class TasksLoader {
 
     private ArrayList<Task> tasks = new ArrayList<>();
 
-    private static int tasksNo;
-    private static int machinesNo;
+    private static int tasksNo;    // Number of all tasks
+    private static int machinesNo; // Number of all machines
 
     public TasksLoader(String csvPath) {
         this.tasks = loadTasksAndSetMachineAndTasksNo(csvPath);
@@ -30,19 +33,18 @@ public class TasksLoader {
         return this.tasks;
     }
 
-    private ArrayList<Task> loadTasksAndSetMachineAndTasksNo(String csvPath) {
-        CSVParser parser = getCsvParser(csvPath);
+    private ArrayList<Task> loadTasksAndSetMachineAndTasksNo(String path) {
+        List<List<String>> records = readRecords(path);
         ArrayList<Task> tasks = new ArrayList<>();
         int taskId = 0;
         int machineId = 0;
 
-        for (CSVRecord record : parser) {
+        for (List<String> line : records) {
             HashMap<Integer, Double> computationTimeForMachine = new HashMap<>();
-
-            machineId = 0;
-            for (String field : record) {
-                computationTimeForMachine.put(machineId, Double.parseDouble(field));
-                machineId++;
+            for (int i = 0; i < line.size(); i += 2) {
+                machineId = Integer.parseInt(line.get(i));
+                double computationTime = Double.parseDouble(line.get(i+1));
+                computationTimeForMachine.put(machineId, computationTime);
             }
             tasks.add(new Task(taskId, computationTimeForMachine));
             taskId++;
@@ -50,19 +52,32 @@ public class TasksLoader {
 
         // we start counting from 0
         tasksNo = taskId - 1;
-        machinesNo = machineId - 1;
+        machinesNo = machineId;
 
         return tasks;
     }
 
-    private CSVParser getCsvParser(String csvPath) {
-        CSVParser parser = null;
-        try {
-            parser = new CSVParser(new FileReader(csvPath), CSVFormat.DEFAULT);
+    private List<List<String>> readRecords(String file) {
+        Path path = Paths.get(file);
+        try(Stream<String> lines = Files.lines(path)){
+            return lines.map(line -> Arrays.asList(line.trim().split("\\s+")))
+                        .filter(listWithNonEmptyElements())
+                        .collect(Collectors.toList());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return parser;
+        return null;
+    }
+
+    private static Predicate<List<String>> listWithNonEmptyElements() {
+        return strings -> {
+            for (String string : strings) {
+                if (string.isEmpty())
+                    return false;
+            }
+            return true;
+        };
     }
 
     public static int getMachinesNo() {

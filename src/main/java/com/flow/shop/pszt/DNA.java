@@ -80,23 +80,43 @@ public class DNA implements Operators {
     }
 
     public void calculateFitness () {
-        this.fitness = c(TasksLoader.getTasksNo(), TasksLoader.getMachinesNo());
+    	Double[][] computedValues = new Double[TasksLoader.getTasksNo() + 1][TasksLoader.getMachinesNo() + 1];
+    	this.fitness = c(TasksLoader.getTasksNo(), TasksLoader.getMachinesNo(), computedValues);
+//        System.out.println("Fitness == " + this.fitness);
     }
 
-    private double c(int i, int j) {
-        if (i == 1 && i == 1) {
-            return genes.get(i).getComputationTimeForMachine(j);
+    /**
+     * Function which implements counting of fitness by recurrence
+     *
+     * @param i - actual position in rows (tasks) in recurrence
+     * @param j - actual position in columns (machines) in recurrence
+     * @param computedValues - temporary table for avoiding stack overflow
+     * @return - fitness count
+     */
+    private double c(int i, int j, Double[][] computedValues) {
+        if (computedValues[i][j] != null) {
+            return computedValues[i][j];
         }
 
-        if (i == 1 && j > 1) {
-            return c(i, j-1) + genes.get(i).getComputationTimeForMachine(j);
+        if (i == 0 && j == 0) {
+            double returnValue = genes.get(i).getComputationTimeForMachine(j);
+            computedValues[i][j] = returnValue;
+            return returnValue;
         }
 
-        if (i > 1 && j == 1) {
-            return c(i-1, j) + genes.get(i).getComputationTimeForMachine(j);
+        if (i == 0 && j > 0) {
+            double returnValue =  c(i, j-1, computedValues) + genes.get(i).getComputationTimeForMachine(j);
+            computedValues[i][j] = returnValue;
+            return returnValue;
         }
 
-        return Math.max(c(i -1, j), c(i, j-1)) + genes.get(i).getComputationTimeForMachine(j);
+        if (i > 0 && j == 0) {
+            double returnValue =  c(i-1, j, computedValues) + genes.get(i).getComputationTimeForMachine(j);
+            computedValues[i][j] = returnValue;
+            return returnValue;
+        }
+
+        return Math.max(c(i - 1, j, computedValues), c(i, j - 1, computedValues)) + genes.get(i).getComputationTimeForMachine(j);
     }
 
     public double getFitness() {
