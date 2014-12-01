@@ -7,8 +7,7 @@
     <bean id="tasksLoader" class="com.flow.shop.pszt.TasksLoader" >
         <!--<constructor-arg value="C:\Users\Adamek\Documents\_I.ISI\PSZT\projekt\2020rand\problems\problem.1"/>-->
         <!--<constructor-arg value="src/main/resources/0505rand/problem.1"/>-->
-        <constructor-arg value="src/main/resources/2020rand/problem.1"/>
-        <!--<constructor-arg value="src/main/resources/data.csv"/>-->
+        <constructor-arg value="src/main/resources/1010rand/problem.1"/>
     </bean>
 
 </beans>

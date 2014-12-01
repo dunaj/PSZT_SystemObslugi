@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class Main {
 
-    private static final int DEFAULT_POPULATION_MAX = 5;
+    private static final int DEFAULT_POPULATION_MAX = 10;
     private static final double DEFAULT_MUTATION_RATE = 0.03;
     private static final int DEFAULT_MAX_GENERATIONS = 1000;
 
