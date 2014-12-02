@@ -14,10 +14,9 @@ public class Population {
     private DNA[] population;             // Array to hold the current population
     private List<DNA> matingPool;         // ArrayList which we will use for our "mating pool"
     private int generations;              // Number of generations
-    private boolean finished;             // Are we finished evolving?
 
-    private double BEST_FITNESS_EVER;
-	private DNA BEST_MEMBER_EVER;
+    private double bestFitnessEver;
+	private DNA bestMemberEver;
     
     private Random random = new Random();
 
@@ -29,11 +28,10 @@ public class Population {
         }
         calcFitness();
         this.matingPool = new ArrayList<>();
-        this.finished = false;
         this.generations = 0;
 
-        BEST_FITNESS_EVER = Double.MAX_VALUE;
-        BEST_MEMBER_EVER = null;
+        bestFitnessEver = Double.MAX_VALUE;
+        bestMemberEver = null;
     }
 
     // Fill our fitness array with a value for every member of the population
@@ -106,15 +104,11 @@ public class Population {
      */
     public void evaluate() {
     	for (int i = 0; i < population.length; i++) {
-            if (population[i].getFitness() < BEST_FITNESS_EVER) {
-                BEST_MEMBER_EVER = population[i];
-                BEST_FITNESS_EVER = population[i].getFitness();
+            if (population[i].getFitness() < bestFitnessEver) {
+                bestMemberEver = population[i];
+                bestFitnessEver = population[i].getFitness();
             }
         }
-    }
-    
-    public boolean finished() {
-        return finished;
     }
 
     public int getGenerations() {
@@ -130,11 +124,11 @@ public class Population {
         return total / (population.length);
     }
     
-    public double getBEST_FITNESS_EVER() {
-		return BEST_FITNESS_EVER;
+    public double getBestFitnessEver() {
+		return bestFitnessEver;
 	}
 
-	public String getBEST_MEMBER_EVER() {
-		return BEST_MEMBER_EVER.getOrder();
+	public String getBestMemberEver() {
+		return bestMemberEver.getOrder();
 	}
 }
