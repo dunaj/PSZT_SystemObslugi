@@ -17,6 +17,7 @@ public class Population {
 
     private double bestFitnessEver;
 	private DNA bestMemberEver;
+    private int bestGenerationNo;
     
     private Random random = new Random();
 
@@ -33,6 +34,7 @@ public class Population {
         bestFitnessEver = Double.MAX_VALUE;
         bestMemberEver = null;
     }
+
 
     // Fill our fitness array with a value for every member of the population
     void calcFitness() {
@@ -102,11 +104,12 @@ public class Population {
      * than the one which was best until now
      * @return
      */
-    public void evaluate() {
+    public void evaluate(int generationNo) {
     	for (int i = 0; i < population.length; i++) {
             if (population[i].getFitness() < bestFitnessEver) {
                 bestMemberEver = population[i];
                 bestFitnessEver = population[i].getFitness();
+                bestGenerationNo = generationNo;
             }
         }
     }
@@ -131,4 +134,8 @@ public class Population {
 	public String getBestMemberEver() {
 		return bestMemberEver.getOrder();
 	}
+
+    public int getBestGenerationNo() {
+        return bestGenerationNo;
+    }
 }

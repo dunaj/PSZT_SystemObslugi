@@ -48,7 +48,7 @@ public class Main {
         main.startKeyInputThread();
 
         for (int i = 0; i < main.maxGenerations && !main.shouldBeStopped(); i++){
-            main.oneGeneration();
+            main.oneGeneration(i);
         }
 
         Instant stop = Instant.now();
@@ -68,14 +68,14 @@ public class Main {
         population = new Population(mutationRate, populationMax, loadedTasks);
     }
     
-    public void oneGeneration() {
+    public void oneGeneration(int generationNo) {
         // Generate mating pool
         population.naturalSelection();
         //Create next generation
         population.generate();
         // Calculate fitness
         population.calcFitness();
-        population.evaluate();
+        population.evaluate(generationNo);
     }
 
     public void displayInfo() {
@@ -84,6 +84,7 @@ public class Main {
         // Display current status of population
         DNA bestMemberInCurrentPopulation = population.getBestMemberDNA();
         System.out.println("Best member's fitness in current population: " + bestMemberInCurrentPopulation.getFitness());
+        System.out.println("Best generation number: " + population.getBestGenerationNo());
         System.out.println("Best member ever: " + population.getBestMemberEver());
         System.out.println("Best member in current population: " + bestMemberInCurrentPopulation.getOrder());
         System.out.println("Total generations: " + population.getGenerations());
