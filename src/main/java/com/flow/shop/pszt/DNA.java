@@ -82,7 +82,6 @@ public class DNA implements Operators {
     public void calculateFitness () {
     	Double[][] computedValues = new Double[TasksLoader.getTasksNo() + 1][TasksLoader.getMachinesNo() + 1];
     	this.fitness = c(TasksLoader.getTasksNo(), TasksLoader.getMachinesNo(), computedValues);
-//        System.out.println("Fitness == " + this.fitness);
     }
 
     /**
@@ -116,7 +115,9 @@ public class DNA implements Operators {
             return returnValue;
         }
 
-        return Math.max(c(i - 1, j, computedValues), c(i, j - 1, computedValues)) + genes.get(i).getComputationTimeForMachine(j);
+        double returnValue = Math.max(c(i - 1, j, computedValues), c(i, j - 1, computedValues)) + genes.get(i).getComputationTimeForMachine(j);
+        computedValues[i][j] = returnValue;
+        return returnValue;
     }
 
     public double getFitness() {

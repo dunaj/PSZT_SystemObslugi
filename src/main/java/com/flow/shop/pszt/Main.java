@@ -39,7 +39,7 @@ public class Main {
             main.oneGeneration();
         }
     }
-    
+
     public void setup(int populationMax, double mutationRate) {
         // Load csv file and get all tasks
         this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
