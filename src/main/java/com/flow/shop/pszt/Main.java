@@ -3,7 +3,10 @@ package com.flow.shop.pszt;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by krris on 02.11.14.
@@ -11,9 +14,9 @@ import java.util.ArrayList;
  */
 public class Main {
 
-    private static final int DEFAULT_POPULATION_MAX = 10;
+    private static final int DEFAULT_POPULATION_MAX = 100;
     private static final double DEFAULT_MUTATION_RATE = 0.03;
-    private static final int DEFAULT_MAX_GENERATIONS = 1000;
+    private static final int DEFAULT_MAX_GENERATIONS = 500;
 
     private Population population;
     private ApplicationContext context;
@@ -22,7 +25,11 @@ public class Main {
     private double mutationRate;
     private int maxGenerations;
 
+    private boolean stopAlgorithm = false;
+
     public static void main(String[] args) {
+        Instant start = Instant.now();
+
         Main main = new Main();
         if (args.length==0) { // if we don't have any command line arguments
             main.populationMax = DEFAULT_POPULATION_MAX;
@@ -34,10 +41,16 @@ public class Main {
             main.maxGenerations = Integer.parseInt(args[2]);
         }
         main.setup(main.populationMax, main.mutationRate);
+        main.startKeyInputThread();
 
-        for (int i = 0; i < main.maxGenerations; i++){
+        for (int i = 0; i < main.maxGenerations && !main.shouldBeStopped(); i++){
             main.oneGeneration();
         }
+
+        Instant stop = Instant.now();
+        long executionTime = Duration.between(start, stop).getSeconds();
+        System.out.println("Execution time: " + executionTime + " seconds");
+        main.displayInfo();
     }
 
     public void setup(int populationMax, double mutationRate) {
@@ -58,21 +71,46 @@ public class Main {
         // Calculate fitness
         population.calcFitness();
         population.evaluate();
-        displayInfo();
     }
 
     public void displayInfo() {
     	// Display the best population ever and its fitness
-        System.out.println("Best fitness: "+ population.getBEST_FITNESS_EVER());
-        System.out.println("Best member ever: " + population.getBEST_MEMBER_EVER());
+        System.out.println("Best fitness: "+ population.getBestFitnessEver());
         // Display current status of population
         DNA bestMemberInCurrentPopulation = population.getBestMemberDNA();
         System.out.println("Best member's fitness in current population: " + bestMemberInCurrentPopulation.getFitness());
+        System.out.println("Best member ever: " + population.getBestMemberEver());
         System.out.println("Best member in current population: " + bestMemberInCurrentPopulation.getOrder());
         System.out.println("Total generations: " + population.getGenerations());
         System.out.println("Average fitness: " + population.getAverageFitness());
         System.out.println("Total population: " + populationMax);
         System.out.println("Mutation rate: " + (mutationRate * 100) + "%");
         System.out.println("===========================");
+    }
+
+    private Thread inputThread = new Thread(() -> {
+        Scanner scan = new Scanner(System.in);
+        String input;
+        while (true) {
+            System.out.println("Type 'c' to stop this program: ");
+            System.out.println("===========================");
+            input = scan.next().trim();
+            if (input.equals("c")) {
+                setStopAlgoritm(true);
+                break;
+            }
+        }
+    });
+
+    public void startKeyInputThread() {
+        this.inputThread.start();
+    }
+
+    public void setStopAlgoritm(boolean value) {
+        this.stopAlgorithm = value;
+    }
+
+    public boolean shouldBeStopped() {
+        return this.stopAlgorithm;
     }
 }
