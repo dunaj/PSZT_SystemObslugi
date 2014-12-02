@@ -4,8 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="tasksLoader" class="com.flow.shop.pszt.TasksLoader" >
-        <constructor-arg value="src/main/resources/2020rand/problem.1"/>
-    </bean>
+    <bean id="tasksLoader" class="com.flow.shop.pszt.TasksLoader" />
 
 </beans>

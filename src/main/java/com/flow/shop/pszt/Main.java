@@ -17,6 +17,7 @@ public class Main {
     private static final int DEFAULT_POPULATION_MAX = 100;
     private static final double DEFAULT_MUTATION_RATE = 0.03;
     private static final int DEFAULT_MAX_GENERATIONS = 500;
+    private static final String DEFAULT_DATA_PATH = "src/main/resources/2020rand/problem.1";
 
     private Population population;
     private ApplicationContext context;
@@ -24,6 +25,7 @@ public class Main {
     private int populationMax;
     private double mutationRate;
     private int maxGenerations;
+    private String dataPath = "";
 
     private boolean stopAlgorithm = false;
 
@@ -35,10 +37,12 @@ public class Main {
             main.populationMax = DEFAULT_POPULATION_MAX;
             main.mutationRate = DEFAULT_MUTATION_RATE;
             main.maxGenerations = DEFAULT_MAX_GENERATIONS;
+            main.dataPath = DEFAULT_DATA_PATH;
         } else {
             main.populationMax = Integer.parseInt(args[0]);
             main.mutationRate = Double.parseDouble(args[1]);
             main.maxGenerations = Integer.parseInt(args[2]);
+            main.dataPath = args[3];
         }
         main.setup(main.populationMax, main.mutationRate);
         main.startKeyInputThread();
@@ -57,6 +61,7 @@ public class Main {
         // Load csv file and get all tasks
         this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
         TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
+        tasksLoader.setFilePath(dataPath);
         ArrayList<Task> loadedTasks = tasksLoader.getTasks();
 
         // Create a population with a target phrase, mutation rate, and population max
@@ -96,7 +101,7 @@ public class Main {
             System.out.println("===========================");
             input = scan.next().trim();
             if (input.equals("c")) {
-                setStopAlgoritm(true);
+                setStopAlgorithm(true);
                 break;
             }
         }
@@ -106,7 +111,7 @@ public class Main {
         this.inputThread.start();
     }
 
-    public void setStopAlgoritm(boolean value) {
+    public void setStopAlgorithm(boolean value) {
         this.stopAlgorithm = value;
     }
 

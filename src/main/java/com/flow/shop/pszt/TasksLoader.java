@@ -25,16 +25,17 @@ public class TasksLoader {
     private static int tasksNo;    // Number of all tasks
     private static int machinesNo; // Number of all machines
 
-    public TasksLoader(String csvPath) {
-        this.tasks = loadTasksAndSetMachineAndTasksNo(csvPath);
-    }
+    private String filePath;
 
     public ArrayList<Task> getTasks() {
+        if (tasks.isEmpty()) {
+            this.tasks = loadTasksAndSetMachineAndTasksNo();
+        }
         return this.tasks;
     }
 
-    private ArrayList<Task> loadTasksAndSetMachineAndTasksNo(String path) {
-        List<List<String>> records = readRecords(path);
+    private ArrayList<Task> loadTasksAndSetMachineAndTasksNo() {
+        List<List<String>> records = readRecords(filePath);
         ArrayList<Task> tasks = new ArrayList<>();
         int taskId = 0;
         int machineId = 0;
@@ -85,7 +86,10 @@ public class TasksLoader {
     }
 
     public static int getTasksNo() {
-
         return tasksNo;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }
