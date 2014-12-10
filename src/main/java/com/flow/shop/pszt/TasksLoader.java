@@ -59,20 +59,6 @@ public class TasksLoader {
         for (int i = 0; i < tasksComputationTimes.length; i++ ) {
             tasks.add(new Task(i, tasksComputationTimes[i]));
         }
-//        for (List<String> line : records) {
-//            HashMap<Integer, Double> computationTimeForMachine = new HashMap<>();
-//            for (int i = 0; i < line.size(); i += 2) {
-//                machineId = Integer.parseInt(line.get(i));
-//                double computationTime = Double.parseDouble(line.get(i+1));
-//                computationTimeForMachine.put(machineId, computationTime);
-//            }
-//            tasks.add(new Task(taskId, computationTimeForMachine));
-//            taskId++;
-//        }
-
-//        tasksNo = taskId - 1;
-//        machinesNo = machineId;
-
         return tasks;
     }
 

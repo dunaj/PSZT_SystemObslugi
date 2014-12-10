@@ -30,7 +30,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Id: " + this.id;
+        return Integer.toString(this.id);
     }
 
     @Override

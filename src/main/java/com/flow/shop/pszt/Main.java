@@ -14,11 +14,12 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static final int DEFAULT_POPULATION_MAX = 2000;
-    private static final double DEFAULT_MUTATION_RATE = 0.03;
-    private static final int DEFAULT_MAX_GENERATIONS = 5000;
+    private static final int DEFAULT_POPULATION_MAX = 500;
+    private static final double DEFAULT_MUTATION_RATE = 0.3;
+    private static final int DEFAULT_MAX_GENERATIONS = 3000;
     private static final String DEFAULT_DATA_PATH = "src/main/resources/test/0520.problem";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/2020rand/problem.1";
+//    private static final String DEFAULT_DATA_PATH = "src/main/resources/0203rand/problem.1";
 
     private Population population;
     private ApplicationContext context;

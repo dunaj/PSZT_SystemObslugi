@@ -117,6 +117,7 @@ public class DNA implements Operators {
     }
 
     public double getFitness() {
+        this.calculateFitness();
         return fitness;
     }
 }

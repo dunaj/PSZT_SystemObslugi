@@ -82,9 +82,12 @@ public class Population {
             child.mutate(mutationRate);
             population[i] = child;
         }
+//        System.out.println("Osobniki w populacji:");
+//        for (DNA dna : this.population) {
+//            System.out.println(dna.getOrder() + " fit: " + dna.getFitness());
+//        }
         generations++;
     }
-
     // Compute the current "most fit" member of the population
     public DNA getBestMemberDNA() {
         double worldRecord = Double.MAX_VALUE;
