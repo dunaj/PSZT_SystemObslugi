@@ -52,10 +52,6 @@ public class DNA implements Operators {
             if (random.nextFloat() % 1 < mutationRate) {
                 int firstTaskId = random.nextInt(genes.size());
                 int secondTaskId = random.nextInt(genes.size());
-                while (firstTaskId == secondTaskId) {
-                    secondTaskId = random.nextInt(genes.size());
-                }
-
                 switchGenes(firstTaskId, secondTaskId);
             }
         }
