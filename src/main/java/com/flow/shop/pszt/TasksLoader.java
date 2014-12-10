@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,23 +34,44 @@ public class TasksLoader {
     private ArrayList<Task> loadTasksAndSetMachineAndTasksNo() {
         List<List<String>> records = readRecords(filePath);
         ArrayList<Task> tasks = new ArrayList<>();
+
+        // we start counting from 0
+        machinesNo = records.size() - 1;
+        tasksNo = (records.get(0).size() / 2) - 1;
+
         int taskId = 0;
         int machineId = 0;
 
-        for (List<String> line : records) {
-            HashMap<Integer, Double> computationTimeForMachine = new HashMap<>();
-            for (int i = 0; i < line.size(); i += 2) {
-                machineId = Integer.parseInt(line.get(i));
-                double computationTime = Double.parseDouble(line.get(i+1));
-                computationTimeForMachine.put(machineId, computationTime);
-            }
-            tasks.add(new Task(taskId, computationTimeForMachine));
-            taskId++;
+        HashMap tasksComputationTimes[] = new HashMap[tasksNo + 1];
+        for (int i = 0; i < tasksComputationTimes.length; i++){
+            tasksComputationTimes[i] = new HashMap<Integer, Double>();
         }
 
-        // we start counting from 0
-        tasksNo = taskId - 1;
-        machinesNo = machineId;
+        for (List<String> line : records) {
+            for (int i = 0; i < line.size(); i += 2) {
+                taskId = Integer.parseInt(line.get(i));
+                double computationTime = Double.parseDouble(line.get(i+1));
+                tasksComputationTimes[taskId].put(machineId, computationTime);
+            }
+            machineId++;
+        }
+
+        for (int i = 0; i < tasksComputationTimes.length; i++ ) {
+            tasks.add(new Task(i, tasksComputationTimes[i]));
+        }
+//        for (List<String> line : records) {
+//            HashMap<Integer, Double> computationTimeForMachine = new HashMap<>();
+//            for (int i = 0; i < line.size(); i += 2) {
+//                machineId = Integer.parseInt(line.get(i));
+//                double computationTime = Double.parseDouble(line.get(i+1));
+//                computationTimeForMachine.put(machineId, computationTime);
+//            }
+//            tasks.add(new Task(taskId, computationTimeForMachine));
+//            taskId++;
+//        }
+
+//        tasksNo = taskId - 1;
+//        machinesNo = machineId;
 
         return tasks;
     }
