@@ -15,7 +15,6 @@ public class Population {
     private double alpha;
     private double crossoverRate;
 
-
     private DNA[] population;             // Array to hold the current population
     private DNA[] tempPopulationT;
     private DNA[] tempPopulationR;
@@ -117,25 +116,6 @@ public class Population {
             population[i] = matingPool.get(id);
         }
     }
-//
-//    // Create a new generation
-//    public void generate() {
-//        // Refill the population with children from the mating pool
-//        for (int i = 0; i < population.length; i++) {
-//            int a = random.nextInt(matingPool.size());
-//            int b = random.nextInt(matingPool.size());
-//            DNA partnerA = matingPool.get(a);
-//            DNA partnerB = matingPool.get(b);
-//            DNA child = partnerA.crossover(partnerB);
-//            child.mutate(mutationRate);
-//            population[i] = child;
-//        }
-////        System.out.println("Osobniki w populacji:");
-////        for (DNA dna : this.population) {
-////            System.out.println(dna.getOrder() + " fit: " + dna.getFitness());
-////        }
-//        generations++;
-//    }
 
 
     // Compute the current "most fit" member of the population
