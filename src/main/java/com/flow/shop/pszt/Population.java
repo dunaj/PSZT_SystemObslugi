@@ -1,6 +1,7 @@
 package com.flow.shop.pszt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -11,9 +12,17 @@ import java.util.Random;
 public class Population {
 
     private double mutationRate;          // Mutation rate
+    private double alpha;
+    private double crossoverRate = 0.5;
+
+
     private DNA[] population;             // Array to hold the current population
+    private DNA[] tempPopulationT;
+    private DNA[] tempPopulationR;
+
     private List<DNA> matingPool;         // ArrayList which we will use for our "mating pool"
     private int generations;              // Number of generations
+
 
     private double bestFitnessEver;
 	private DNA bestMemberEver;
@@ -21,13 +30,18 @@ public class Population {
     
     private Random random = new Random();
 
-    public Population( double mutationRate, int populationMax, ArrayList<Task> tasks) {
+    public Population( double mutationRate, double alpha, int populationMax, ArrayList<Task> tasks) {
         this.mutationRate = mutationRate;
+        this.alpha = alpha;
+
         this.population = new DNA[populationMax];
         for (int i = 0; i < population.length; i++) {
             population[i] = new DNA(tasks);
         }
-        calcFitness();
+
+        this.tempPopulationT = new DNA[(int)(populationMax * this.alpha)];
+        this.tempPopulationR = new DNA[(int)(populationMax * this.alpha)];
+
         this.matingPool = new ArrayList<>();
         this.generations = 0;
 
@@ -35,59 +49,94 @@ public class Population {
         bestMemberEver = null;
     }
 
-
-    // Fill our fitness array with a value for every member of the population
-    void calcFitness() {
-        for (int i = 0; i < population.length; i++) {
-            population[i].calculateFitness();
+    public void createTemporaryPopulation() {
+        for (int i = 0; i < tempPopulationT.length; i++) {
+            int randomDna = random.nextInt(population.length);
+            tempPopulationT[i] = population[randomDna];
         }
     }
 
-    // Generate a mating pool
+    public void crossoverAndMutation() {
+        assert (tempPopulationR.length == tempPopulationT.length);
+
+        tempPopulationR = Arrays.copyOf(tempPopulationT, tempPopulationR.length);
+
+        for (int i = 0; i < tempPopulationR.length; i++) {
+            // crossover
+            if (random.nextFloat() < crossoverRate) {
+                int a = random.nextInt(tempPopulationR.length);
+                int b = random.nextInt(tempPopulationR.length);
+                DNA partnerA = tempPopulationR[a];
+                DNA partnerB = tempPopulationR[b];
+                DNA child = partnerA.crossover(partnerB);
+                tempPopulationR[i] = child;
+            }
+
+            // mutation
+            tempPopulationR[i].mutate(mutationRate);
+        }
+    }
+
+    // Create a new generation
+    public void oneGeneration() {
+        this.createTemporaryPopulation();
+        this.crossoverAndMutation();
+        this.naturalSelection();
+        generations++;
+    }
+
+
     public void naturalSelection() {
         // Clear the ArrayList
         matingPool.clear();
 
         double totalFitness = 0;
-        for (int i = 0; i < population.length; i++) {
-            totalFitness += population[i].getFitness();
+        for (int i = 0; i < tempPopulationR.length; i++) {
+            totalFitness += tempPopulationR[i].getFitness();
         }
 
         // Based on fitness, each member will get added to the mating pool a certain number of times
         // a lower fitness = more entries to mating pool = more likely to be picked as a parent
         // a higher fitness = fewer entries to mating pool = less likely to be picked as a parent
-        for (int i = 0; i < population.length; i++) {
+        for (int i = 0; i < tempPopulationR.length; i++) {
 
             // switch value of fitness: lower value = more likely to be picked
-            double fitness = totalFitness - population[i].getFitness();
+            double fitness = totalFitness - tempPopulationR[i].getFitness();
 
             // Normalization: brings all values into the range [0,1]. Sum of all normalized fitness is 1.
             double normalizedFitness = fitness / totalFitness;
             int n = (int) (normalizedFitness * 100);         // Arbitrary multiplier, we can also use monte carlo method
             for (int j = 0; j < n; j++) {                    // and pick a random numbers
-                matingPool.add(population[i]);
+                matingPool.add(tempPopulationR[i]);
             }
         }
-    }
 
-    // Create a new generation
-    public void generate() {
-        // Refill the population with children from the mating pool
         for (int i = 0; i < population.length; i++) {
-            int a = random.nextInt(matingPool.size());
-            int b = random.nextInt(matingPool.size());
-            DNA partnerA = matingPool.get(a);
-            DNA partnerB = matingPool.get(b);
-            DNA child = partnerA.crossover(partnerB);
-            child.mutate(mutationRate);
-            population[i] = child;
+            int id = random.nextInt(matingPool.size());
+            population[i] = matingPool.get(id);
         }
-//        System.out.println("Osobniki w populacji:");
-//        for (DNA dna : this.population) {
-//            System.out.println(dna.getOrder() + " fit: " + dna.getFitness());
-//        }
-        generations++;
     }
+//
+//    // Create a new generation
+//    public void generate() {
+//        // Refill the population with children from the mating pool
+//        for (int i = 0; i < population.length; i++) {
+//            int a = random.nextInt(matingPool.size());
+//            int b = random.nextInt(matingPool.size());
+//            DNA partnerA = matingPool.get(a);
+//            DNA partnerB = matingPool.get(b);
+//            DNA child = partnerA.crossover(partnerB);
+//            child.mutate(mutationRate);
+//            population[i] = child;
+//        }
+////        System.out.println("Osobniki w populacji:");
+////        for (DNA dna : this.population) {
+////            System.out.println(dna.getOrder() + " fit: " + dna.getFitness());
+////        }
+//        generations++;
+//    }
+
+
     // Compute the current "most fit" member of the population
     public DNA getBestMemberDNA() {
         double worldRecord = Double.MAX_VALUE;

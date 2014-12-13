@@ -14,9 +14,10 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static final int DEFAULT_POPULATION_MAX = 500;
-    private static final double DEFAULT_MUTATION_RATE = 0.3;
-    private static final int DEFAULT_MAX_GENERATIONS = 3000;
+    private static final int DEFAULT_POPULATION_MAX = 30;
+    private static final double DEFAULT_MUTATION_RATE = 0.03;
+    private static final int DEFAULT_MAX_GENERATIONS = 20000;
+    private static final double DEFAULT_ALPHA = 1.5;
     private static final String DEFAULT_DATA_PATH = "src/main/resources/test/0520.problem";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/2020rand/problem.1";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/0203rand/problem.1";
@@ -27,6 +28,7 @@ public class Main {
     private int populationMax;
     private double mutationRate;
     private int maxGenerations;
+    private double alpha;
     private String dataPath = "";
 
     private boolean stopAlgorithm = false;
@@ -40,13 +42,15 @@ public class Main {
             main.mutationRate = DEFAULT_MUTATION_RATE;
             main.maxGenerations = DEFAULT_MAX_GENERATIONS;
             main.dataPath = DEFAULT_DATA_PATH;
+            main.alpha = DEFAULT_ALPHA;
         } else {
             main.populationMax = Integer.parseInt(args[0]);
-            main.mutationRate = Double.parseDouble(args[1]);
-            main.maxGenerations = Integer.parseInt(args[2]);
+            main.alpha = Integer.parseInt(args[1]);
+            main.mutationRate = Double.parseDouble(args[2]);
+            main.maxGenerations = Integer.parseInt(args[3]);
             main.dataPath = args[3];
         }
-        main.setup(main.populationMax, main.mutationRate);
+        main.setup(main.populationMax, main.mutationRate, main.alpha);
 //        main.startKeyInputThread();
 
         for (int i = 0; i < main.maxGenerations && !main.shouldBeStopped(); i++){
@@ -59,7 +63,7 @@ public class Main {
         main.displayInfo();
     }
 
-    public void setup(int populationMax, double mutationRate) {
+    public void setup(int populationMax, double mutationRate, double alpha) {
         // Load csv file and get all tasks
         this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
         TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
@@ -67,16 +71,11 @@ public class Main {
         ArrayList<Task> loadedTasks = tasksLoader.getTasks();
 
         // Create a population with a target phrase, mutation rate, and population max
-        population = new Population(mutationRate, populationMax, loadedTasks);
+        population = new Population(mutationRate, alpha, populationMax, loadedTasks);
     }
     
     public void oneGeneration(int generationNo) {
-        // Generate mating pool
-        population.naturalSelection();
-        //Create next generation
-        population.generate();
-        // Calculate fitness
-        population.calcFitness();
+        population.oneGeneration();
         population.evaluate(generationNo);
     }
 
