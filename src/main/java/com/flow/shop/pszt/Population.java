@@ -13,7 +13,7 @@ public class Population {
 
     private double mutationRate;          // Mutation rate
     private double alpha;
-    private double crossoverRate = 0.5;
+    private double crossoverRate;
 
 
     private DNA[] population;             // Array to hold the current population
@@ -30,9 +30,10 @@ public class Population {
     
     private Random random = new Random();
 
-    public Population( double mutationRate, double alpha, int populationMax, ArrayList<Task> tasks) {
+    public Population( double mutationRate, double alpha, double crossoverRate, int populationMax, ArrayList<Task> tasks) {
         this.mutationRate = mutationRate;
         this.alpha = alpha;
+        this.crossoverRate = crossoverRate;
 
         this.population = new DNA[populationMax];
         for (int i = 0; i < population.length; i++) {
