@@ -14,15 +14,13 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static final int DEFAULT_POPULATION_MAX = 1000;
+    private static final int DEFAULT_POPULATION_MAX = 100;
     private static final double DEFAULT_MUTATION_RATE = 0.2;
-    private static final int DEFAULT_MAX_GENERATIONS = 50000;
+    private static final int DEFAULT_MAX_GENERATIONS = 5000;
     private static final double DEFAULT_ALPHA = 3.0;
     private static final String DEFAULT_DATA_PATH = "src/main/resources/05-20/2.problem";
-//    private static final String DEFAULT_DATA_PATH = "src/main/resources/2020rand/problem.1";
-//    private static final String DEFAULT_DATA_PATH = "src/main/resources/0203rand/problem.1";
 
-    private static final double LOG_EVERY_NTH_GENERATION = 99;
+    private static final double LOG_EVERY_NTH_GENERATION = 100;
 
     private Population population;
     private ApplicationContext context;
@@ -47,10 +45,10 @@ public class Main {
             main.alpha = DEFAULT_ALPHA;
         } else {
             main.populationMax = Integer.parseInt(args[0]);
-            main.alpha = Integer.parseInt(args[1]);
-            main.mutationRate = Double.parseDouble(args[3]);
-            main.maxGenerations = Integer.parseInt(args[4]);
-            main.dataPath = args[5];
+            main.alpha = Double.parseDouble(args[1]);
+            main.mutationRate = Double.parseDouble(args[2]);
+            main.maxGenerations = Integer.parseInt(args[3]);
+            main.dataPath = args[4];
         }
         main.setup(main.populationMax, main.mutationRate, main.alpha);
         main.startKeyInputThread();
