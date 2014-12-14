@@ -1,9 +1,6 @@
 package com.flow.shop.pszt;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by krris on 02.11.14.
@@ -87,34 +84,8 @@ public class Population {
 
 
     public void naturalSelection() {
-        // Clear the ArrayList
-        matingPool.clear();
-
-        double totalFitness = 0;
-        for (int i = 0; i < tempPopulationR.length; i++) {
-            totalFitness += tempPopulationR[i].getFitness();
-        }
-
-        // Based on fitness, each member will get added to the mating pool a certain number of times
-        // a lower fitness = more entries to mating pool = more likely to be picked as a parent
-        // a higher fitness = fewer entries to mating pool = less likely to be picked as a parent
-        for (int i = 0; i < tempPopulationR.length; i++) {
-
-            // switch value of fitness: lower value = more likely to be picked
-            double fitness = totalFitness - tempPopulationR[i].getFitness();
-
-            // Normalization: brings all values into the range [0,1]. Sum of all normalized fitness is 1.
-            double normalizedFitness = fitness / totalFitness;
-            int n = (int) (normalizedFitness * 100);         // Arbitrary multiplier, we can also use monte carlo method
-            for (int j = 0; j < n; j++) {                    // and pick a random numbers
-                matingPool.add(tempPopulationR[i]);
-            }
-        }
-
-        for (int i = 0; i < population.length; i++) {
-            int id = random.nextInt(matingPool.size());
-            population[i] = matingPool.get(id);
-        }
+        Arrays.sort(tempPopulationR, Comparator.comparing(DNA::getFitness));
+        population = Arrays.copyOf(tempPopulationR, population.length);
     }
 
 

@@ -14,16 +14,16 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static final int DEFAULT_POPULATION_MAX = 10000;
-    private static final double DEFAULT_MUTATION_RATE = 0.2;
-    private static final int DEFAULT_MAX_GENERATIONS = 100000;
-    private static final double DEFAULT_ALPHA = 3.0;
+    private static final int DEFAULT_POPULATION_MAX = 50;
+    private static final double DEFAULT_MUTATION_RATE = 0.8;
+    private static final int DEFAULT_MAX_GENERATIONS = 50000;
+    private static final double DEFAULT_ALPHA = 2.0;
     private static final double DEFAULT_CROSSOVER_RATE = 1.0;
     private static final String DEFAULT_DATA_PATH = "src/main/resources/test/0520/2.problem";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/2020rand/problem.1";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/0203rand/problem.1";
 
-    private static final double LOG_EVERY_NTH_GENERATION = 49;
+    private static final double LOG_EVERY_NTH_GENERATION = 99;
 
     private Population population;
     private ApplicationContext context;
