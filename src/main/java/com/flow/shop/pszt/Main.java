@@ -14,16 +14,15 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static final int DEFAULT_POPULATION_MAX = 100;
+    private static final int DEFAULT_POPULATION_MAX = 1000;
     private static final double DEFAULT_MUTATION_RATE = 0.2;
-    private static final int DEFAULT_MAX_GENERATIONS = 1000;
+    private static final int DEFAULT_MAX_GENERATIONS = 50000;
     private static final double DEFAULT_ALPHA = 3.0;
-    private static final double DEFAULT_CROSSOVER_RATE = 1.0;
-    private static final String DEFAULT_DATA_PATH = "src/main/resources/10-20/1.problem";
+    private static final String DEFAULT_DATA_PATH = "src/main/resources/05-20/2.problem";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/2020rand/problem.1";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/0203rand/problem.1";
 
-    private static final double LOG_EVERY_NTH_GENERATION = 49;
+    private static final double LOG_EVERY_NTH_GENERATION = 99;
 
     private Population population;
     private ApplicationContext context;
@@ -32,7 +31,6 @@ public class Main {
     private double mutationRate;
     private int maxGenerations;
     private double alpha;
-    private double crossoverRate;
     private String dataPath = "";
 
     private boolean stopAlgorithm = false;
@@ -47,11 +45,9 @@ public class Main {
             main.maxGenerations = DEFAULT_MAX_GENERATIONS;
             main.dataPath = DEFAULT_DATA_PATH;
             main.alpha = DEFAULT_ALPHA;
-            main.crossoverRate = DEFAULT_CROSSOVER_RATE;
         } else {
             main.populationMax = Integer.parseInt(args[0]);
             main.alpha = Integer.parseInt(args[1]);
-            main.crossoverRate = Integer.parseInt(args[2]);
             main.mutationRate = Double.parseDouble(args[3]);
             main.maxGenerations = Integer.parseInt(args[4]);
             main.dataPath = args[5];
@@ -80,7 +76,7 @@ public class Main {
         ArrayList<Task> loadedTasks = tasksLoader.getTasks();
 
         // Create a population with a target phrase, mutation rate, and population max
-        population = new Population(mutationRate, alpha, crossoverRate, populationMax, loadedTasks);
+        population = new Population(mutationRate, alpha, populationMax, loadedTasks);
     }
     
     public void oneGeneration(int generationNo) {

@@ -1,9 +1,8 @@
 package com.flow.shop.pszt;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import com.google.common.collect.ObjectArrays;
+
+import java.util.*;
 
 /**
  * Created by krris on 02.11.14.
@@ -13,15 +12,12 @@ public class Population {
 
     private double mutationRate;          // Mutation rate
     private double alpha;
-    private double crossoverRate;
 
     private DNA[] population;             // Array to hold the current population
     private DNA[] tempPopulationT;
     private DNA[] tempPopulationR;
 
-    private List<DNA> matingPool;         // ArrayList which we will use for our "mating pool"
     private int generations;              // Number of generations
-
 
     private double bestFitnessEver;
 	private DNA bestMemberEver;
@@ -29,10 +25,9 @@ public class Population {
     
     private Random random = new Random();
 
-    public Population( double mutationRate, double alpha, double crossoverRate, int populationMax, ArrayList<Task> tasks) {
+    public Population( double mutationRate, double alpha, int populationMax, ArrayList<Task> tasks) {
         this.mutationRate = mutationRate;
         this.alpha = alpha;
-        this.crossoverRate = crossoverRate;
 
         this.population = new DNA[populationMax];
         for (int i = 0; i < population.length; i++) {
@@ -42,7 +37,6 @@ public class Population {
         this.tempPopulationT = new DNA[(int)(populationMax * this.alpha)];
         this.tempPopulationR = new DNA[(int)(populationMax * this.alpha)];
 
-        this.matingPool = new ArrayList<>();
         this.generations = 0;
 
         bestFitnessEver = Double.MAX_VALUE;
@@ -63,14 +57,12 @@ public class Population {
 
         for (int i = 0; i < tempPopulationR.length; i++) {
             // crossover
-            if (random.nextFloat() < crossoverRate) {
-                int a = random.nextInt(tempPopulationR.length);
-                int b = random.nextInt(tempPopulationR.length);
-                DNA partnerA = tempPopulationR[a];
-                DNA partnerB = tempPopulationR[b];
-                DNA child = partnerA.crossover(partnerB);
-                tempPopulationR[i] = child;
-            }
+            int a = random.nextInt(tempPopulationR.length);
+            int b = random.nextInt(tempPopulationR.length);
+            DNA partnerA = tempPopulationR[a];
+            DNA partnerB = tempPopulationR[b];
+            DNA child = partnerA.crossover(partnerB);
+            tempPopulationR[i] = child;
 
             // mutation
             tempPopulationR[i].mutate(mutationRate);
@@ -87,34 +79,9 @@ public class Population {
 
 
     public void naturalSelection() {
-        // Clear the ArrayList
-        matingPool.clear();
-
-        double totalFitness = 0;
-        for (int i = 0; i < tempPopulationR.length; i++) {
-            totalFitness += tempPopulationR[i].getFitness();
-        }
-
-        // Based on fitness, each member will get added to the mating pool a certain number of times
-        // a lower fitness = more entries to mating pool = more likely to be picked as a parent
-        // a higher fitness = fewer entries to mating pool = less likely to be picked as a parent
-        for (int i = 0; i < tempPopulationR.length; i++) {
-
-            // switch value of fitness: lower value = more likely to be picked
-            double fitness = totalFitness - tempPopulationR[i].getFitness();
-
-            // Normalization: brings all values into the range [0,1]. Sum of all normalized fitness is 1.
-            double normalizedFitness = fitness / totalFitness;
-            int n = (int) (normalizedFitness * 100);         // Arbitrary multiplier, we can also use monte carlo method
-            for (int j = 0; j < n; j++) {                    // and pick a random numbers
-                matingPool.add(tempPopulationR[i]);
-            }
-        }
-
-        for (int i = 0; i < population.length; i++) {
-            int id = random.nextInt(matingPool.size());
-            population[i] = matingPool.get(id);
-        }
+        DNA[] both = ObjectArrays.concat(population, tempPopulationR, DNA.class);
+        Arrays.sort(both, Comparator.comparing(DNA::getFitness));
+        population = Arrays.copyOf(both, population.length);
     }
 
 
