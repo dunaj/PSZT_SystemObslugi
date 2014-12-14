@@ -14,14 +14,16 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static final int DEFAULT_POPULATION_MAX = 30;
-    private static final double DEFAULT_MUTATION_RATE = 0.1;
-    private static final int DEFAULT_MAX_GENERATIONS = 30000;
-    private static final double DEFAULT_ALPHA = 1.5;
+    private static final int DEFAULT_POPULATION_MAX = 10000;
+    private static final double DEFAULT_MUTATION_RATE = 0.2;
+    private static final int DEFAULT_MAX_GENERATIONS = 100000;
+    private static final double DEFAULT_ALPHA = 3.0;
     private static final double DEFAULT_CROSSOVER_RATE = 1.0;
-    private static final String DEFAULT_DATA_PATH = "src/main/resources/test/0520.problem";
+    private static final String DEFAULT_DATA_PATH = "src/main/resources/test/0520/2.problem";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/2020rand/problem.1";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/0203rand/problem.1";
+
+    private static final double LOG_EVERY_NTH_GENERATION = 49;
 
     private Population population;
     private ApplicationContext context;
@@ -55,10 +57,13 @@ public class Main {
             main.dataPath = args[5];
         }
         main.setup(main.populationMax, main.mutationRate, main.alpha);
-//        main.startKeyInputThread();
+        main.startKeyInputThread();
 
         for (int i = 0; i < main.maxGenerations && !main.shouldBeStopped(); i++){
             main.oneGeneration(i);
+            if (i % LOG_EVERY_NTH_GENERATION == 0) {
+                main.displayInfo();
+            }
         }
 
         Instant stop = Instant.now();
@@ -90,12 +95,12 @@ public class Main {
         DNA bestMemberInCurrentPopulation = population.getBestMemberDNA();
         System.out.println("Best member's fitness in current population: " + bestMemberInCurrentPopulation.getFitness());
         System.out.println("Best generation number: " + population.getBestGenerationNo());
-        System.out.println("Best member ever: " + population.getBestMemberEver());
-        System.out.println("Best member in current population: " + bestMemberInCurrentPopulation.getOrder());
+//        System.out.println("Best member ever: " + population.getBestMemberEver());
+//        System.out.println("Best member in current population: " + bestMemberInCurrentPopulation.getOrder());
         System.out.println("Total generations: " + population.getGenerations());
-        System.out.println("Average fitness: " + population.getAverageFitness());
-        System.out.println("Total population: " + populationMax);
-        System.out.println("Mutation rate: " + (mutationRate * 100) + "%");
+//        System.out.println("Average fitness: " + population.getAverageFitness());
+//        System.out.println("Total population: " + populationMax);
+//        System.out.println("Mutation rate: " + (mutationRate * 100) + "%");
         System.out.println("===========================");
     }
 
