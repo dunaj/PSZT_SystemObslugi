@@ -14,12 +14,15 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static final int DEFAULT_POPULATION_MAX = 500;
-    private static final double DEFAULT_MUTATION_RATE = 0.3;
-    private static final int DEFAULT_MAX_GENERATIONS = 3000;
-    private static final String DEFAULT_DATA_PATH = "src/main/resources/test/0520.problem";
+    private static final int DEFAULT_POPULATION_MAX = 1000;
+    private static final double DEFAULT_MUTATION_RATE = 0.2;
+    private static final int DEFAULT_MAX_GENERATIONS = 50000;
+    private static final double DEFAULT_ALPHA = 3.0;
+    private static final String DEFAULT_DATA_PATH = "src/main/resources/05-20/2.problem";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/2020rand/problem.1";
 //    private static final String DEFAULT_DATA_PATH = "src/main/resources/0203rand/problem.1";
+
+    private static final double LOG_EVERY_NTH_GENERATION = 99;
 
     private Population population;
     private ApplicationContext context;
@@ -27,6 +30,7 @@ public class Main {
     private int populationMax;
     private double mutationRate;
     private int maxGenerations;
+    private double alpha;
     private String dataPath = "";
 
     private boolean stopAlgorithm = false;
@@ -40,17 +44,22 @@ public class Main {
             main.mutationRate = DEFAULT_MUTATION_RATE;
             main.maxGenerations = DEFAULT_MAX_GENERATIONS;
             main.dataPath = DEFAULT_DATA_PATH;
+            main.alpha = DEFAULT_ALPHA;
         } else {
             main.populationMax = Integer.parseInt(args[0]);
-            main.mutationRate = Double.parseDouble(args[1]);
-            main.maxGenerations = Integer.parseInt(args[2]);
-            main.dataPath = args[3];
+            main.alpha = Integer.parseInt(args[1]);
+            main.mutationRate = Double.parseDouble(args[3]);
+            main.maxGenerations = Integer.parseInt(args[4]);
+            main.dataPath = args[5];
         }
-        main.setup(main.populationMax, main.mutationRate);
-//        main.startKeyInputThread();
+        main.setup(main.populationMax, main.mutationRate, main.alpha);
+        main.startKeyInputThread();
 
         for (int i = 0; i < main.maxGenerations && !main.shouldBeStopped(); i++){
             main.oneGeneration(i);
+            if (i % LOG_EVERY_NTH_GENERATION == 0) {
+                main.displayInfo();
+            }
         }
 
         Instant stop = Instant.now();
@@ -59,7 +68,7 @@ public class Main {
         main.displayInfo();
     }
 
-    public void setup(int populationMax, double mutationRate) {
+    public void setup(int populationMax, double mutationRate, double alpha) {
         // Load csv file and get all tasks
         this.context = new ClassPathXmlApplicationContext("com/flow/shop/pszt/bean.xml");
         TasksLoader tasksLoader = (TasksLoader) this.context.getBean("tasksLoader");
@@ -67,16 +76,11 @@ public class Main {
         ArrayList<Task> loadedTasks = tasksLoader.getTasks();
 
         // Create a population with a target phrase, mutation rate, and population max
-        population = new Population(mutationRate, populationMax, loadedTasks);
+        population = new Population(mutationRate, alpha, populationMax, loadedTasks);
     }
     
     public void oneGeneration(int generationNo) {
-        // Generate mating pool
-        population.naturalSelection();
-        //Create next generation
-        population.generate();
-        // Calculate fitness
-        population.calcFitness();
+        population.oneGeneration();
         population.evaluate(generationNo);
     }
 
@@ -87,12 +91,12 @@ public class Main {
         DNA bestMemberInCurrentPopulation = population.getBestMemberDNA();
         System.out.println("Best member's fitness in current population: " + bestMemberInCurrentPopulation.getFitness());
         System.out.println("Best generation number: " + population.getBestGenerationNo());
-        System.out.println("Best member ever: " + population.getBestMemberEver());
-        System.out.println("Best member in current population: " + bestMemberInCurrentPopulation.getOrder());
+//        System.out.println("Best member ever: " + population.getBestMemberEver());
+//        System.out.println("Best member in current population: " + bestMemberInCurrentPopulation.getOrder());
         System.out.println("Total generations: " + population.getGenerations());
-        System.out.println("Average fitness: " + population.getAverageFitness());
-        System.out.println("Total population: " + populationMax);
-        System.out.println("Mutation rate: " + (mutationRate * 100) + "%");
+//        System.out.println("Average fitness: " + population.getAverageFitness());
+//        System.out.println("Total population: " + populationMax);
+//        System.out.println("Mutation rate: " + (mutationRate * 100) + "%");
         System.out.println("===========================");
     }
 

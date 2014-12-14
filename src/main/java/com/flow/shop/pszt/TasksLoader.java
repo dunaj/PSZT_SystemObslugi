@@ -37,7 +37,7 @@ public class TasksLoader {
 
         // we start counting from 0
         machinesNo = records.size() - 1;
-        tasksNo = (records.get(0).size() / 2) - 1;
+        tasksNo = records.get(0).size() - 1;
 
         int taskId = 0;
         int machineId = 0;
@@ -48,9 +48,9 @@ public class TasksLoader {
         }
 
         for (List<String> line : records) {
-            for (int i = 0; i < line.size(); i += 2) {
-                taskId = Integer.parseInt(line.get(i));
-                double computationTime = Double.parseDouble(line.get(i+1));
+            for (int i = 0; i < line.size(); i++) {
+                taskId = i;
+                double computationTime = Double.parseDouble(line.get(i));
                 tasksComputationTimes[taskId].put(machineId, computationTime);
             }
             machineId++;
